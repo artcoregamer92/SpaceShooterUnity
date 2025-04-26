@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class BarraDeVida : MonoBehaviour
 {
-    private Slider slider;
+    public Slider slider;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -12,7 +12,7 @@ public class BarraDeVida : MonoBehaviour
 
     public void CambiarVidaMaxima(float vidaMaxima)
     {
-        slider.value = vidaMaxima;
+        slider.maxValue = vidaMaxima;
     }
 
     public void CambiarVidaActual(float cantidadVida)

@@ -8,13 +8,21 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject disparoPrefab;
     [SerializeField] private GameObject spawnPoint1;
     [SerializeField] private GameObject spawnPoint2;
+
+    [SerializeField] private float vida;
+    [SerializeField] private float maximoVida;
+    [SerializeField] private BarraDeVida barraDeVida;
+
     private float temporizador = 0.5f;
     private float vidas = 100;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        vida = maximoVida;
+        barraDeVida.InicializarBarraDeVida(vida);
     }
+
+    
 
     // Update is called once per frame
     void Update()
@@ -48,16 +56,41 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void TomarDaño(float daño)
+    {
+        vida -= daño;
+        barraDeVida.CambiarVidaActual(vida);
+        if (vida <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+
+    public void Curar(float curacion)
+    {
+        if ((vida + curacion) > maximoVida)
+        {
+            vida = maximoVida;
+        }
+
+        else
+        {
+            vida += curacion;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D elOtro)
     {
         if(elOtro.gameObject.CompareTag("DisparoEnemigo") || elOtro.gameObject.CompareTag("Enemigo"))
         {
-            vidas -= 20;
+            //vidas -= 20;
             Destroy(elOtro.gameObject);
-            if(vidas <= 0)
-            {
-                Destroy(this.gameObject);
-            }
+            TomarDaño(20);
+            //if(vidas <= 0)
+            //{
+                //Destroy(this.gameObject);
+            //}
         }
     }
 }

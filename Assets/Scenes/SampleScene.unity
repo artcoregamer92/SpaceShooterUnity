@@ -1131,6 +1131,9 @@ MonoBehaviour:
   disparoPrefab: {fileID: 8168599078127001180, guid: e268737f5afea3343b242bd6accf7786, type: 3}
   spawnPoint1: {fileID: 1936522190}
   spawnPoint2: {fileID: 1257079483}
+  vida: 100
+  maximoVida: 100
+  barraDeVida: {fileID: 1097704845}
 --- !u!4 &799077090
 Transform:
   m_ObjectHideFlags: 0
@@ -1553,6 +1556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10ece0105d5cff4787fd062df19cd5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
 --- !u!1 &1128038521
 GameObject:
   m_ObjectHideFlags: 0
