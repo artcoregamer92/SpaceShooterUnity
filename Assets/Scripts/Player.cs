@@ -4,21 +4,24 @@ using UnityEngine.Video;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float velocidad;
+
     [SerializeField] private float ratioDisparo;
     [SerializeField] private GameObject disparoPrefab;
     [SerializeField] private GameObject spawnPoint1;
     [SerializeField] private GameObject spawnPoint2;
 
-    [SerializeField] private float vida;
-    [SerializeField] private float maximoVida;
+    [Header("Vida")]
+    [SerializeField] private float maximoVida = 100f;
     [SerializeField] private BarraDeVida barraDeVida;
 
+    private float vida;
     private float temporizador = 0.5f;
-    private float vidas = 100;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         vida = maximoVida;
+        Debug.Log("Vida inicial: " + vida); // <- Te dice si vida está bien
         barraDeVida.InicializarBarraDeVida(vida);
     }
 
@@ -35,31 +38,36 @@ public class Player : MonoBehaviour
     {
         float inputH = Input.GetAxisRaw("Horizontal");
         float inputV = Input.GetAxisRaw("Vertical");
-        transform.Translate(new Vector3(inputH, inputV).normalized * velocidad * Time.deltaTime);
+        Vector3 direccion = new Vector3(inputH, inputV).normalized; 
+        transform.Translate(direccion * velocidad * Time.deltaTime);
     }
 
     void DelimitarMovimiento()
     {
         float xClamped = Mathf.Clamp(transform.position.x, -8.4f, 8.4f);
         float yClamped = Mathf.Clamp(transform.position.y, -4.5f, 4.5f);
-        transform.position = new Vector3(xClamped, yClamped, 0);
+        transform.position = new Vector3(xClamped, yClamped, 0f);
     }
     void Disparar()
     {
-        temporizador += 1 * Time.deltaTime;
+        temporizador += Time.deltaTime;
 
-        if(Input.GetKey(KeyCode.Space) && temporizador > ratioDisparo)
+        if (Input.GetKey(KeyCode.Space) && temporizador > ratioDisparo)
         {
             Instantiate(disparoPrefab, spawnPoint1.transform.position, Quaternion.identity);
             Instantiate(disparoPrefab, spawnPoint2.transform.position, Quaternion.identity);
-            temporizador = 0;
+            temporizador = 0f;
         }
     }
 
     public void TomarDaño(float daño)
     {
         vida -= daño;
-        barraDeVida.CambiarVidaActual(vida);
+        vida = Mathf.Max(vida, 0f);
+
+        if (barraDeVida != null)
+            barraDeVida.CambiarVidaActual(vida);
+
         if (vida <= 0)
         {
             Destroy(gameObject);
@@ -69,28 +77,18 @@ public class Player : MonoBehaviour
 
     public void Curar(float curacion)
     {
-        if ((vida + curacion) > maximoVida)
-        {
-            vida = maximoVida;
-        }
+        vida = Mathf.Min(vida + curacion, maximoVida);
 
-        else
-        {
-            vida += curacion;
-        }
+        if (barraDeVida != null)
+            barraDeVida.CambiarVidaActual(vida);
     }
 
     private void OnTriggerEnter2D(Collider2D elOtro)
     {
-        if(elOtro.gameObject.CompareTag("DisparoEnemigo") || elOtro.gameObject.CompareTag("Enemigo"))
+        if (elOtro.CompareTag("DisparoEnemigo") || elOtro.CompareTag("Enemigo"))
         {
-            //vidas -= 20;
             Destroy(elOtro.gameObject);
-            TomarDaño(20);
-            //if(vidas <= 0)
-            //{
-                //Destroy(this.gameObject);
-            //}
+            TomarDaño(20f);
         }
     }
 }
