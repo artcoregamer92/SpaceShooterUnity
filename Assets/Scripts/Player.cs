@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
 
     private float vida;
     private float temporizador = 0.5f;
+    public GameOverManager gameOverManager; // asignar desde el Inspector
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -70,9 +71,15 @@ public class Player : MonoBehaviour
 
         if (vida <= 0)
         {
-            Destroy(gameObject);
+            vida = 0;
+
+            if (gameOverManager != null)
+                gameOverManager.ActivarGameOver();
+
+            gameObject.SetActive(false);
         }
     }
+
 
 
     public void Curar(float curacion)
